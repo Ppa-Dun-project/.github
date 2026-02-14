@@ -1,0 +1,34 @@
+name: Feature
+description: New feature or enhancement
+title: "[Feature] "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Feature Request"
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What feature are you proposing?
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      description: Break down the work
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: false
+  - type: textarea
+    id: done-criteria
+    attributes:
+      label: Done Criteria
+      description: When is this considered complete?
+    validations:
+      required: true
+
+

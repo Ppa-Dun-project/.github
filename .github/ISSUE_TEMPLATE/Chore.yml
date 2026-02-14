@@ -1,0 +1,25 @@
+name: Chore
+description: Refactoring, config changes, dependency updates, etc.
+title: "[Chore] "
+labels: ["chore"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Chore"
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What maintenance work is needed?
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      description: Break down the work
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: false
