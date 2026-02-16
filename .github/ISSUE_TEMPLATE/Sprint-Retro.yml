@@ -1,0 +1,26 @@
+name: 🔄 Sprint Retro
+description: Record sprint retrospective
+title: "[Sprint Retro] "
+labels: ["sprint-retro"]
+body:
+  - type: textarea
+    id: good
+    attributes:
+      label: Good
+      description: What went well?
+    validations:
+      required: true
+  - type: textarea
+    id: bad
+    attributes:
+      label: Bad
+      description: What could be improved?
+    validations:
+      required: true
+  - type: textarea
+    id: action-items
+    attributes:
+      label: Action Items
+      description: What to improve next sprint?
+    validations:
+      required: false

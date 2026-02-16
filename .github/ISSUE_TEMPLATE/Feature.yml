@@ -1,11 +1,8 @@
-name: Feature
-description: New feature or enhancement
+name: ✨ Feature
+description: New user-facing feature
 title: "[Feature] "
 labels: ["feature"]
 body:
-  - type: markdown
-    attributes:
-      value: "## Feature Request"
   - type: textarea
     id: description
     attributes:
@@ -17,18 +14,8 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      description: Break down the work
       value: |
-        - [ ] 
-        - [ ] 
+        - [ ]
+        - [ ]
     validations:
       required: false
-  - type: textarea
-    id: done-criteria
-    attributes:
-      label: Done Criteria
-      description: When is this considered complete?
-    validations:
-      required: true
-
-

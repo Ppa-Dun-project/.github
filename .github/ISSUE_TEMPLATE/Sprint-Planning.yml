@@ -1,0 +1,21 @@
+name: 📋 Sprint Planning
+description: Plan sprint goals and tasks
+title: "[Sprint Planning] "
+labels: ["sprint-planning"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Sprint Goal
+      description: What is the goal for this sprint?
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      value: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true
