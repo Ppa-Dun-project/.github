@@ -1,0 +1,102 @@
+name: Discord Project Board Notification
+
+on:
+  projects_v2_item:
+    types: [created, edited]
+
+jobs:
+  notify-item-created:
+    if: github.event.action == 'created'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Item Details
+        id: item
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          NODE_ID: ${{ github.event.projects_v2_item.node_id }}
+        run: |
+          RESULT=$(gh api graphql -f query='
+            query($id: ID!) {
+              node(id: $id) {
+                ... on ProjectV2Item {
+                  content {
+                    ... on Issue {
+                      title
+                      url
+                    }
+                    ... on PullRequest {
+                      title
+                      url
+                    }
+                  }
+                }
+              }
+            }' -f id="$NODE_ID")
+
+          echo "title=$(echo "$RESULT" | jq -r '.data.node.content.title // "Unknown"')" >> "$GITHUB_OUTPUT"
+          echo "url=$(echo "$RESULT" | jq -r '.data.node.content.url // ""')" >> "$GITHUB_OUTPUT"
+
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ITEM_TITLE: ${{ steps.item.outputs.title }}
+          ITEM_URL: ${{ steps.item.outputs.url }}
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg title "Project Board: $ITEM_TITLE" \
+            --arg url "$ITEM_URL" \
+            --arg desc "New item added to project board" \
+            --argjson color 3447003 \
+            '{embeds: [{title: $title, url: $url, description: $desc, color: $color}]}')
+
+          curl -sf -H "Content-Type: application/json" -d "$PAYLOAD" "$DISCORD_WEBHOOK"
+
+  notify-status-change:
+    if: >-
+      github.event.action == 'edited' &&
+      github.event.changes.field_value.field_name == 'Status'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Item Details
+        id: item
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          NODE_ID: ${{ github.event.projects_v2_item.node_id }}
+        run: |
+          RESULT=$(gh api graphql -f query='
+            query($id: ID!) {
+              node(id: $id) {
+                ... on ProjectV2Item {
+                  content {
+                    ... on Issue {
+                      title
+                      url
+                    }
+                    ... on PullRequest {
+                      title
+                      url
+                    }
+                  }
+                }
+              }
+            }' -f id="$NODE_ID")
+
+          echo "title=$(echo "$RESULT" | jq -r '.data.node.content.title // "Unknown"')" >> "$GITHUB_OUTPUT"
+          echo "url=$(echo "$RESULT" | jq -r '.data.node.content.url // ""')" >> "$GITHUB_OUTPUT"
+
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ITEM_TITLE: ${{ steps.item.outputs.title }}
+          ITEM_URL: ${{ steps.item.outputs.url }}
+          FROM_STATUS: ${{ github.event.changes.field_value.from.name }}
+          TO_STATUS: ${{ github.event.changes.field_value.to.name }}
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg title "Status Changed: $ITEM_TITLE" \
+            --arg url "$ITEM_URL" \
+            --arg desc "**$FROM_STATUS** → **$TO_STATUS**" \
+            --argjson color 15105570 \
+            '{embeds: [{title: $title, url: $url, description: $desc, color: $color}]}')
+
+          curl -sf -H "Content-Type: application/json" -d "$PAYLOAD" "$DISCORD_WEBHOOK"
