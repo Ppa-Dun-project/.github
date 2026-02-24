@@ -52,9 +52,7 @@ jobs:
           curl -sf -H "Content-Type: application/json" -d "$PAYLOAD" "$DISCORD_WEBHOOK"
 
   notify-status-change:
-    if: >-
-      github.event.action == 'edited' &&
-      github.event.changes.field_value.field_name == 'Status'
+    if: github.event.action == 'edited'
     runs-on: ubuntu-latest
     steps:
       - name: Get Item Details
@@ -89,11 +87,12 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
           ITEM_TITLE: ${{ steps.item.outputs.title }}
           ITEM_URL: ${{ steps.item.outputs.url }}
+          FIELD_NAME: ${{ github.event.changes.field_value.field_name }}
           FROM_STATUS: ${{ github.event.changes.field_value.from.name }}
           TO_STATUS: ${{ github.event.changes.field_value.to.name }}
         run: |
           PAYLOAD=$(jq -n \
-            --arg title "Status Changed: $ITEM_TITLE" \
+            --arg title "$FIELD_NAME Changed: $ITEM_TITLE" \
             --arg url "$ITEM_URL" \
             --arg desc "**$FROM_STATUS** → **$TO_STATUS**" \
             --argjson color 15105570 \
