@@ -24,3 +24,11 @@ body:
       description: How should this be fixed?
     validations:
       required: false
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related
+      description: Link any related issues (e.g. org/repo#123)
+    validations:
+      required: false
